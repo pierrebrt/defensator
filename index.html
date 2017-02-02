@@ -1,0 +1,190 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="//s1.lemde.fr/medias/web/js/lib/require/core/current/require.js">
+</script>
+<script src="//s1.lemde.fr/bootstrap/www/main.js"></script>
+<link rel="stylesheet" href="//s1.lemde.fr/medias/web/css/base.css">
+<link rel="stylesheet" href="//s1.lemde.fr/medias/web/css/fonts.css">
+<style>
+body {
+    background-color: #FFF;
+    overflow-x: hidden;
+    max-width: 650px;
+}
+
+#defensator {
+    border-left: 1px solid #eef1f5;
+    border-right: 1px solid #eef1f5;
+    border-top: 4px solid #16212c;
+    border-bottom: 1px solid #eef1f5;
+    padding: 10px 0;
+    width: 100%;
+}
+
+.titre {
+    padding: 6px 16px;
+    width: 100%;
+    text-align: center;
+    display: inline-block;
+}
+
+#defensator .explications {
+    margin: 20px 0px;
+    padding: 10px;
+    background-color: #f8f9fb;
+    border-top: 1px solid #eef1f5;
+    border-bottom: 1px solid #eef1f5;
+    color: #8b9299;
+    text-align: center;
+}
+
+#defensator .texte {
+    margin: 1.5rem .5rem;
+    padding: 0 10px;
+}
+
+#defensator .centrer {
+    width: 100%;
+    text-align: center;
+    padding: 2rem;
+}
+
+#defensator .vraiecitass {
+    display: block;
+    font-family: "Georgia";
+    font-size: 1.6rem;
+    line-height: 2rem;
+    clear: both;
+    padding: 0 3rem 0 1rem;
+    border-left: 4px solid #b9c0c5;
+    color: #5d666d;
+    margin-left: 2rem;
+}
+
+#defensator .macitass {
+    font-family: "Georgia";
+    font-size: 1.6rem;
+    line-height: 2rem;
+    display: block;
+    clear: both;
+    margin-left: 2rem;
+    padding: 0 3rem 0 1rem;
+    border-left: 4px solid #5d666d;
+    color: #000;
+}
+</style>
+<div class="tt4 titre">Défensator</div>
+<div id="defensator">
+    <p class="texte">En partant de vraies phrases de François Fillon à propos de «&nbsp;l'affaire Penelope Fillon&nbsp;», générez des phrases qu'aurait pu prononcer une personnalité dans la même situation.</p>
+    <div class="explications clearfix">Cliquez sur le bouton jaune pour générer un autre phrase de défense.</div>
+    <p class="texte">Vous pourriez vous défendre en déclarant&nbsp;:</p>
+    <p id="phrase" class="macitass"></p>
+    <div class="centrer">
+        <div id="boutonbalthazar" class="btn_grand btn_abo">Générez une défense aléatoire</div>
+    </div>
+    <p class="texte" style="color:#5d666d;">La phrase originale (source <span id="source"></span>)&nbsp;:</p>
+    <p id="phraseoriginale" class="vraiecitass"></p>
+</div>
+<script type="text/javascript">
+/*
+Nos bibliothèques Javascript
+*/
+
+require(["jquery"], function($) {
+
+    var largeur = document.getElementById("defensator").offsetWidth;
+    var decompte = []
+
+    var base = [{
+        "trous": "Je veux dire à *+soutien+* que *+decla+* et que je ne pardonnerai jamais à ceux qui ont voulu nous *+tacle+*.",
+        "originale": "Je veux dire à Penelope que je l’aime et que je ne pardonnerai jamais à ceux qui ont voulu nous jeter aux loups.",
+        "lien": "https://www.fillon2017.fr/2017/01/29/discours-la-villette/"
+    }, {
+        "trous": "Je vois que la séquence *+attaques+* est ouverte. […] Je voudrais simplement dire que je suis scandalisé par *+insultes+* de cet article. <br>Parce que c'est *+soutienvirgule+* n'aurait pas le droit de travailler?",
+        "originale": "Je vois que la séquence des boules puantes est ouverte. […] Je voudrais simplement dire que je suis scandalisé par le mépris et par la misogynie de cet article. <br>Parce que c'est mon épouse, elle n'aurait pas le droit de travailler?",
+        "lien": "http://www.francetvinfo.fr/politique/francois-fillon/francois-fillon-deplore-les-boules-puantes-du-canard-enchaine_2035309.html"
+    }, {
+        "trous": "Moi, je n’ai peur de rien, j’ai *+faitsgloire+*. <br>Si on veut m’attaquer qu’on *+combat+* mais qu’on laisse *+soutien+* tranquille.",
+        "originale": "Moi, je n’ai peur de rien, j’ai le cuir solide. <br>Si on veut m’attaquer qu’on m’attaque droit dans les yeux mais qu’on laisse ma femme tranquille.",
+        "lien": "https://www.fillon2017.fr/2017/01/29/discours-la-villette/"
+    }, {
+        "trous": "Elle m'a représenté dans *+alibi+*, dans *+alibi+*. Elle me faisait *+activite+*.",
+        "originale": "Elle m'a représenté dans des manifestations, dans des associations. Elle me faisait la synthèse de la presse.",
+        "lien": "http://www.lemonde.fr/affaire-penelope-fillon/article/2017/01/30/francois-fillon-et-sa-femme-entendus-par-la-police_5071761_5070021.html"
+    }];
+
+    var bouts = {
+        "soutien": ["mon assistante parlementaire d'amour", "ma Reine des neiges", "ma Falbala du sud de la Sarthe", "ma Cléopâtre galloise", "une pauvre anglo-galloise égarée", "la future première dame de France", "ma directrice de la photocopieuse", "ma garde du corps", "ma princesse", "la mère de mes enfants-avocats-assistants"],
+        "soutienvirgule": ["mon assistante parlementaire d'amour, elle", "ma reine des neiges, elle", "ma Falbala du sud de la Sarthe, elle", "ma Cléopâtre galloise, elle", "une pauvre anglo-galloise égarée, elle", "la future première dame de France, elle", "ma directrice de la photocopieuse, elle", "ma garde du corps, elle", "ma princesse, elle", "la mère de mes enfants-avocats-assistants, elle"],
+        "decla": ["je lui trouverai un petit boulot", "je lui dirai les mots bleus", "je lui </em>donne toutes mes différences, tous ces défauts qui sont autant de chances<em>", "le chèque est collé sous la table", "je lui offrirai la Nintendo Switch", "je la protègerai contre les chiens", "j'escaladerai le donjon pour la délivrer", "je n'ai pas peur des Jedi", "our princess is in another castle", "je n'ai pas peur de Smok le dragon", "l'anneau d'invisibilité est rangé dans le tiroir de la cuisine", "la cape d'invisibilité est dans le placard de la chambre"],
+        "faitsgloire": ["presque fait les 24 heures du Mans", "filé la circonscription de Rachida Dati à Nathalie Kosciusko-Morizet", "réformé les retraites", "gagné la mairie de Sablé-sur-Sarthe en 1983", "perdu ma circonscription au profit de Stéphane Le Foll", "fait peur à Roselyne Bachelot sur le circuit des 24 heures du Mans", "fait la une de Paris Match", "survécu au Salon de l'agriculture", "des sourcils d'ours brun", "déjà porté un jean dans ma vie", "déjà été confondu avec le présentateur d'Enquête Exclusive", "des chaussettes de toutes les couleurs", "déjà été confondu avec Don Draper"],
+        "attaques": ["du bullshit bingo", "des vols de crottes en escadrille", "des tacles à la carotide", "des tampons à la Chabal", "des lits en portefeuille", "des boîtes de lentilles dans les chaussettes", "du poil à gratter", "des farces et attrapes", "des coussins péteurs", "des courses en sac"],
+        "insultes": ["l'antipatriotisme", "le snobisme bobo", "le politiquement correct", "l'antisarthisme", "l'antiféminisme", "le manque de gentillesse", "le peu de charité chrétienne", "la vilainie gauloise", "le sexisme", "le caractère phallorate", "la bien pensance"],
+        "alibi": ["des tournois de ping-pong", "des tournois de billard", "des championnats de course en sac", "des défilés de majorettes", "des kermesses", "des fêtes d'école", "des après-midi tricot", "des goûters d'anniversaire", "des parties de solitaire", "des parties de freecell", "des championnats de démineur", "des inaugurations", "des brocantes"],
+        "activite": ["les grilles de sudoku", "la lecture des rapports de l'Assemblée", "la traduction de la presse anglaise", "la sélection des tweets du jour", "l'animation de ma page MySpace", "l'organisation de nos meetings à deux", "l'intendance de notre bureau à domicile", "le classement de mes fiches de paie", "des avions en papier avec ses contrats"],
+        "tacle": ["harceler un pauvre petit contribuable", "empêcher d'avoir ma photo affichée dans les mairies", "couvrir de goudron", "envoyer Ursaff, Cancras et Carbalas", "expulser de la Sarthe", "forcer à quitter Paris pour retourner à Sablé-sur-Sarthe"],
+        "combat": ["me prenne à Street Fighter 2", "vienne me défier sur la pelouse de Sablé-sur-Sarthe", "me défie au Mölkky", "se mesure à moi dans un combat singulier de boule lyonnaise", "me prenne à la course landaise", "vienne me défier en football gaélique", "s'attaque à mes chaussettes de couleur"]
+    };
+
+
+
+    function auHasard() {
+        debut();
+
+        function debut() {
+            num = (Math.random() * (base.length - 1)).toFixed(0);
+            if (decompte.indexOf(num) == -1) {
+                decompte.push(num)
+                onAffiche();
+            } else if (decompte.indexOf(num) > -1 && decompte.length != base.length) {
+                debut();
+            } else if (decompte.indexOf(num) > -1 && decompte.length == base.length) {
+                decompte = [];
+                debut();
+            }
+        }
+
+        function onAffiche() {
+            phrasecomplete = "<em>«&nbsp;"
+            phrasecomplete += petitremplacement(base[num].trous, num).replace("?", "&nbsp;?")
+            phrasecomplete += "&nbsp;»</em>"
+            source = "<a href=\"" + base[num].lien + "\" target=\"_blank\">" + extractionDomaine(base[num].lien) + "</a>"
+            console.log()
+            $("#phrase").html(phrasecomplete)
+            $("#phraseoriginale").html("<em>«&nbsp;" + (base[num].originale).replace("?", "&nbsp;?") + "&nbsp;»</em>")
+            $("#source").html(source)
+            $("#defensator a").click(function(event) {
+                event.stopImmediatePropagation()
+            });
+        }
+    }
+
+    function extractionDomaine(url) {
+        var domain;
+        if (url.indexOf("://") > -1) {
+            domain = url.split('/')[2];
+        } else {
+            domain = url.split('/')[0];
+        }
+        domain = domain.split(':')[0];
+        return domain.replace("www.", "");
+    }
+
+    function petitremplacement(e, j) {
+        return e.replace(/\*\+([a-z_]*)\+\*/g, function(match, p1) {
+            var numbis = Math.max((Math.random() * (bouts[p1].length - 1)).toFixed(0), 0)
+            return bouts[p1][numbis]
+        })
+    }
+
+    /* On lance une première fois au chargement et au clic, bien entendu */
+
+    $("#boutonbalthazar").on("click", function() {
+        auHasard();
+    })
+
+    auHasard()
+
+
+});
+</script>
